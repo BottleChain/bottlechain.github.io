@@ -1,0 +1,720 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="Ty5skhhRUHq1j2JVYO3eI8VwGQimqfqTYjfXfyr0l1E" />
+
+
+
+
+  <meta name="baidu-site-verification" content="JT2EfYAuhG" />
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android,Android源码设计,原型,深拷贝,浅拷贝," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="&amp;#160; &amp;#160; &amp;#160; &amp;#160;众所周知，在C/C++中的拷贝有深拷贝与浅拷贝之分，实际上也就是只拷贝一个地址还是重新划分一块内存空间来创建一个对象的区别。然而在java中，默认的赋值都是浅拷贝，也就是说都只是指针的传递。那么如何才能在java中进行深拷贝呢，答案是使用clone.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="原型模式以及java的深/浅拷贝">
+<meta property="og:url" content="http:/imoblab.com/2016/05/03/原型模式以及java的深-浅拷贝/index.html">
+<meta property="og:site_name" content="往事随风">
+<meta property="og:description" content="&amp;#160; &amp;#160; &amp;#160; &amp;#160;众所周知，在C/C++中的拷贝有深拷贝与浅拷贝之分，实际上也就是只拷贝一个地址还是重新划分一块内存空间来创建一个对象的区别。然而在java中，默认的赋值都是浅拷贝，也就是说都只是指针的传递。那么如何才能在java中进行深拷贝呢，答案是使用clone.">
+<meta property="og:updated_time" content="2016-05-04T22:56:08.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="原型模式以及java的深/浅拷贝">
+<meta name="twitter:description" content="&amp;#160; &amp;#160; &amp;#160; &amp;#160;众所周知，在C/C++中的拷贝有深拷贝与浅拷贝之分，实际上也就是只拷贝一个地址还是重新划分一块内存空间来创建一个对象的区别。然而在java中，默认的赋值都是浅拷贝，也就是说都只是指针的传递。那么如何才能在java中进行深拷贝呢，答案是使用clone.">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6263263549242476000,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 原型模式以及java的深/浅拷贝 | 往事随风 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="http://s6.cnzz.com/stat.php?id=1258038514&web_id=1258038514" type="text/javascript"></script>
+  </div>
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">往事随风</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">热爱摄影和旅行的咖啡君</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-album">
+          <a href="/photo" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-picture-o"></i> <br />
+            
+            相册
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'ZBfkxTy8XN7yuzX9y569','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                原型模式以及java的深/浅拷贝
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-05-03T23:30:08+08:00" content="2016-05-03">
+              2016-05-03
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Androd/" itemprop="url" rel="index">
+                    <span itemprop="name">Androd</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Androd/设计模式/" itemprop="url" rel="index">
+                    <span itemprop="name">设计模式</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/05/03/原型模式以及java的深-浅拷贝/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/03/原型模式以及java的深-浅拷贝/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&#160; &#160; &#160; &#160;众所周知，在C/C++中的拷贝有深拷贝与浅拷贝之分，实际上也就是只拷贝一个地址还是重新划分一块内存空间来创建一个对象的区别。然而在java中，默认的赋值都是浅拷贝，也就是说都只是指针的传递。那么如何才能在java中进行深拷贝呢，答案是使用clone.<br><a id="more"></a></p>
+<h1 id="java中的深拷贝以及浅拷贝"><a href="#java中的深拷贝以及浅拷贝" class="headerlink" title="java中的深拷贝以及浅拷贝"></a>java中的深拷贝以及浅拷贝</h1><p>&#160; &#160; &#160; &#160;java中的clone方法实际上是定义在Object类中的，java源码中要求，重写clone方法的类，必须implements Cloneable接口，否则会抛异常。那么是不是在自定义类中重写了clone方法，然后调用了super.clone()就可以成功的得到一个拷贝对象了呢。。。并不是，看看下面的例子：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">public class MyDocumet implements Cloneable&#123;</span><br><span class="line">	private String mText;</span><br><span class="line">	private ArrayList&lt;String&gt; mImages = new ArrayList&lt;String&gt;();</span><br><span class="line"></span><br><span class="line">	public <span class="function"><span class="title">MyDocument</span></span>()&#123;</span><br><span class="line">		System.out.println(<span class="string">"构造函数...."</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void addImage(String imgName)&#123;</span><br><span class="line">		mImages.add(imgName);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public String <span class="function"><span class="title">toString</span></span>()&#123;</span><br><span class="line">		StringBuilder imgBuilder = new StringBuilder();</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">for</span>(String name:mImages)&#123;</span><br><span class="line">			imgBuilder.append(name);</span><br><span class="line">			imgBuilder.append(,);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">return</span> <span class="string">"mText = "</span>+mText+<span class="string">", mImages = "</span>+imgBuilder.toString();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	protected MyDocument <span class="function"><span class="title">clone</span></span>()&#123;</span><br><span class="line">		try&#123;</span><br><span class="line">			MyDocument tmp = (MyDocument)super.clone();</span><br><span class="line">			tmp.mText = this.mText;</span><br><span class="line">			tmp.mImages = this.mImages;</span><br><span class="line">			<span class="built_in">return</span> tmp;</span><br><span class="line">		&#125;catch(Exception e)&#123;</span><br><span class="line">			System.out.println(e.printStackTrace());</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">return</span> null;</span><br><span class="line">	&#125;</span><br><span class="line">	// setter and getter <span class="keyword">for</span> mText....</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 调用。。。</span><br><span class="line">public class User&#123;</span><br><span class="line">	</span><br><span class="line">	public static void main(String[] args)&#123;</span><br><span class="line">		MyDocument origin = new MyDocument();</span><br><span class="line">		origin.setText(<span class="string">"i am a doc"</span>);</span><br><span class="line">		origin.addImage(<span class="string">"orgin img"</span>);</span><br><span class="line">		origin.setImages();</span><br><span class="line"></span><br><span class="line">		System.out.println(<span class="string">"==="</span>);</span><br><span class="line">		System.out.println(origin.toString());</span><br><span class="line">		System.out.println(<span class="string">"==="</span>);</span><br><span class="line"></span><br><span class="line">		MyDocument son = origin.clone();</span><br><span class="line">		son.addImage(<span class="string">"son img..."</span>);</span><br><span class="line"></span><br><span class="line">		System.out.println(<span class="string">"==="</span>);</span><br><span class="line">		System.out.println(son.toString());</span><br><span class="line">		System.out.println(<span class="string">"==="</span>);</span><br><span class="line"></span><br><span class="line">		System.out.println(<span class="string">"==="</span>);</span><br><span class="line">		System.out.println(origin.toString());</span><br><span class="line">		System.out.println(<span class="string">"==="</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>&#160; &#160; &#160; &#160;运行会发现，虽然这里使用了clone方法来创建son对象，但是在给son里面添加了一个image之后，原始的对象origin也被改变了。。。为什么呢？这是因为mImages是一个集合，而在clone()方法中，赋值直接使用的tmp.mImages=this.mImages，注意这里是浅拷贝，所以导致MyDocument类中的clone方法不彻底。so，在重写clone方法实现深拷贝的时候同时需要注意成员变量也需要做深拷贝处理，这里将tmp.mImages=this.mImages改为：tmp.mImages=(ArrayList<string>)this.mImages.clone();即可。实际上这里也是由于集合ArrayList中的元素类型是String，是不可变类型，如果是一个自定义类型的话，也要保证其自身正确重写了clone方法才可以，这里有一点嵌套的意思。</string></p>
+<h1 id="原型设计模式"><a href="#原型设计模式" class="headerlink" title="原型设计模式"></a>原型设计模式</h1><p>&#160; &#160; &#160; &#160;说了半天拷贝的事情，这个跟原型设计模式有什么关系？实际上，之前这一句(ArrayList<string>)this.mImages.clone();就是使用了原型设计模式。原型设计模式一般被用在下面集中情况：<br>1、生成一些类初始化需要非常多资源，比如数据，硬件等等，用原型设计模式，可以节省资源消耗。<br>2、使用new来创建一个对象时，需要繁琐的权限申请或者数据转呗工作时。<br>3、一个对象需要提供给其他对象访问时，而且每个调用者都可能需要修改其值，可以使用原型设计模式来保护原始对象的值不被改变。</string></p>
+<p>看一下ArrayList中的clone方法是如何实现深拷贝的：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public class ArrayList&lt;E&gt; extends AbstractList&lt;E&gt; implements Cloneable, Serializable, RandomAccess &#123;</span><br><span class="line">	// 元素数量，及列表大小</span><br><span class="line">	int size;</span><br><span class="line">	// 实际存储数据的数组</span><br><span class="line">	transient Object[] array;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public Object <span class="function"><span class="title">clone</span></span>()&#123;</span><br><span class="line">		try&#123;</span><br><span class="line">			// 单纯用<span class="built_in">clone</span>生成一个新的空对象</span><br><span class="line">			ArrayList&lt;?&gt; result = (ArrayList&lt;?&gt;) super.clone();</span><br><span class="line"></span><br><span class="line">			// 拷贝数据，深拷贝实际上发生在这一句</span><br><span class="line">			result.array = array.clone();</span><br><span class="line">			// 返回生成的对象</span><br><span class="line">			<span class="built_in">return</span> result;</span><br><span class="line"></span><br><span class="line">		&#125;catch(CloneNotSupportException e)&#123;</span><br><span class="line">			throw new AssertionError();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="需要注意的问题"><a href="#需要注意的问题" class="headerlink" title="需要注意的问题"></a>需要注意的问题</h1><p>&#160; &#160; &#160; &#160;实际上Android中就大量使用了原型设计模式，比如某些短信发送的Intent等等，这里就不详细赘述。但是原型设计模式在使用时还需要注意：<br>1、优点是性能比较好，一般来说比new要好<br>2、clone方法创建的对象，没有调用类的构造函数，所以要注意，如果有一些操作在构造函数中做的，需要在clone方法里面想办法处理，否则容易出错。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+            <a href="/tags/Android源码设计/" rel="tag">#Android源码设计</a>
+          
+            <a href="/tags/原型/" rel="tag">#原型</a>
+          
+            <a href="/tags/深拷贝/" rel="tag">#深拷贝</a>
+          
+            <a href="/tags/浅拷贝/" rel="tag">#浅拷贝</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/02/单例模式和Builder模式/" rel="next" title="单例模式和Builder模式">
+                <i class="fa fa-chevron-left"></i> 单例模式和Builder模式
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/31/Android注解式findViewByID以及注解的几种常见用法/" rel="prev" title="Android注解式findViewByID以及注解的几种常见用法">
+                Android注解式findViewByID以及注解的几种常见用法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/05/03/原型模式以及java的深-浅拷贝/"
+           data-title="原型模式以及java的深/浅拷贝" data-url="http:/imoblab.com/2016/05/03/原型模式以及java的深-浅拷贝/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://7xrywe.com1.z0.glb.clouddn.com/IMG_0942.JPG"
+               alt="苦咖啡" />
+          <p class="site-author-name" itemprop="name">苦咖啡</p>
+          <p class="site-description motion-element" itemprop="description">热爱摄影和旅行的咖啡君</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#java中的深拷贝以及浅拷贝"><span class="nav-number">1.</span> <span class="nav-text">java中的深拷贝以及浅拷贝</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#原型设计模式"><span class="nav-number">2.</span> <span class="nav-text">原型设计模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#需要注意的问题"><span class="nav-number">3.</span> <span class="nav-text">需要注意的问题</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">苦咖啡</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"bottlechain"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js"></script>
+    
+  
+
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

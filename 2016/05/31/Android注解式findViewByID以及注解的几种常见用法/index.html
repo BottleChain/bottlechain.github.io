@@ -1,0 +1,721 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="Ty5skhhRUHq1j2JVYO3eI8VwGQimqfqTYjfXfyr0l1E" />
+
+
+
+
+  <meta name="baidu-site-verification" content="JT2EfYAuhG" />
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android,Android源码设计,注解," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="从findViewByID说开去在Android开发中，界面的编写少不了要使用findviewbyid方法来定位一个控件。麻烦的一是几乎每个控件都需要”findviewbyid”一次。。冗余，不优雅；其次是在findviewbyid的时候，参数id往往难以记住。我们希望能够在申明这个控件的时候就能够一劳永逸的完成控件与id的绑定关系。好在我们可以使用注解来做。先看看具体做法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android注解式findViewByID以及注解的几种常见用法">
+<meta property="og:url" content="http:/imoblab.com/2016/05/31/Android注解式findViewByID以及注解的几种常见用法/index.html">
+<meta property="og:site_name" content="往事随风">
+<meta property="og:description" content="从findViewByID说开去在Android开发中，界面的编写少不了要使用findviewbyid方法来定位一个控件。麻烦的一是几乎每个控件都需要”findviewbyid”一次。。冗余，不优雅；其次是在findviewbyid的时候，参数id往往难以记住。我们希望能够在申明这个控件的时候就能够一劳永逸的完成控件与id的绑定关系。好在我们可以使用注解来做。先看看具体做法。">
+<meta property="og:updated_time" content="2016-05-31T04:55:50.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android注解式findViewByID以及注解的几种常见用法">
+<meta name="twitter:description" content="从findViewByID说开去在Android开发中，界面的编写少不了要使用findviewbyid方法来定位一个控件。麻烦的一是几乎每个控件都需要”findviewbyid”一次。。冗余，不优雅；其次是在findviewbyid的时候，参数id往往难以记住。我们希望能够在申明这个控件的时候就能够一劳永逸的完成控件与id的绑定关系。好在我们可以使用注解来做。先看看具体做法。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6263263549242476000,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> Android注解式findViewByID以及注解的几种常见用法 | 往事随风 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="http://s6.cnzz.com/stat.php?id=1258038514&web_id=1258038514" type="text/javascript"></script>
+  </div>
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">往事随风</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">热爱摄影和旅行的咖啡君</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-album">
+          <a href="/photo" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-picture-o"></i> <br />
+            
+            相册
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'ZBfkxTy8XN7yuzX9y569','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Android注解式findViewByID以及注解的几种常见用法
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-05-31T12:53:21+08:00" content="2016-05-31">
+              2016-05-31
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Androd/" itemprop="url" rel="index">
+                    <span itemprop="name">Androd</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/05/31/Android注解式findViewByID以及注解的几种常见用法/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/31/Android注解式findViewByID以及注解的几种常见用法/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="从findViewByID说开去"><a href="#从findViewByID说开去" class="headerlink" title="从findViewByID说开去"></a>从findViewByID说开去</h1><p>在Android开发中，界面的编写少不了要使用findviewbyid方法来定位一个控件。麻烦的一是几乎每个控件都需要”findviewbyid”一次。。冗余，不优雅；其次是在findviewbyid的时候，参数id往往难以记住。我们希望能够在申明这个控件的时候就能够一劳永逸的完成控件与id的绑定关系。好在我们可以使用注解来做。先看看具体做法。<br><a id="more"></a></p>
+<h2 id="基本思路"><a href="#基本思路" class="headerlink" title="基本思路"></a>基本思路</h2><p>首先，我们在申明一个的view控件的语句上方，加入注解。我们知道的是，可以以某种方法来获取这个注解中的值，这个值可以事先设置为该控件的id值。<br><br>其次，在获取到id之后，就只需要找一个地方来运行findviewbyid，然后将find到的view控件赋值给之前的view变量即可。<br><br>实际上我们在activity中调用的findviewbyid最终都是以view.findviewbyid的形式出现的，于是我们只要能够得到activity布局的父容器控件，则就可以轻松的通过view.findviewbyid找到其下所有的子view。</p>
+<h2 id="id注解的编写"><a href="#id注解的编写" class="headerlink" title="id注解的编写"></a>id注解的编写</h2><p>首先要编写一个注解类，注解类的类型不是class，而是@interface，其中value()方法回默认返回注解内容的值，写法如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@Target(ElementType.FIELD)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">public @interface JYView &#123;</span><br><span class="line">    int value();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到除了@interface和value方法之外，还有两个元注解@Target和@Retention，其中Target内的值表示的是该注解用于哪种类型，由于我们这里是放在View成员变量的上面，所以这里选择ElementType.FIELD，然后Retention表示该段代码用于什么时候，我们这里只需要在运行时执行即可，并不需要打包进class文件，所以这里选择RetentionPolicy.RUNTIME。<br><br>写好上面的内容之后，我们就可以在我们的页面内对相应的view申明语句进行注解了。假设这里我们写一个activity，里面有一个textview(R.id.tv_test)和一个imageview(R.id.iv_test)，代码如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">package com.example.jinyi.annotationtest;</span><br><span class="line"></span><br><span class="line">import android.support.v7.app.AppCompatActivity;</span><br><span class="line">import android.os.Bundle;</span><br><span class="line">import android.widget.ImageView;</span><br><span class="line">import android.widget.TextView;</span><br><span class="line"></span><br><span class="line">public class MainActivity extends AppCompatActivity &#123;</span><br><span class="line"></span><br><span class="line">    @JYView(R.id.iv_<span class="built_in">test</span>)</span><br><span class="line">    private ImageView imageView;</span><br><span class="line">    @JYView(R.id.tv_<span class="built_in">test</span>)</span><br><span class="line">    private TextView textView;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        <span class="built_in">set</span>ContentView(R.layout.activity_main);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>布局文件：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span>?&gt;</span><br><span class="line">&lt;RelativeLayout xmlns:android=<span class="string">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">    xmlns:tools=<span class="string">"http://schemas.android.com/tools"</span></span><br><span class="line">    android:layout_width=<span class="string">"match_parent"</span></span><br><span class="line">    android:layout_height=<span class="string">"match_parent"</span></span><br><span class="line">    android:paddingBottom=<span class="string">"@dimen/activity_vertical_margin"</span></span><br><span class="line">    android:paddingLeft=<span class="string">"@dimen/activity_horizontal_margin"</span></span><br><span class="line">    android:paddingRight=<span class="string">"@dimen/activity_horizontal_margin"</span></span><br><span class="line">    android:paddingTop=<span class="string">"@dimen/activity_vertical_margin"</span></span><br><span class="line">    tools:context=<span class="string">"com.example.jinyi.annotationtest.MainActivity"</span>&gt;</span><br><span class="line"></span><br><span class="line">    &lt;TextView</span><br><span class="line">        android:id=<span class="string">"@+id/tv_test"</span></span><br><span class="line">        android:layout_width=<span class="string">"wrap_content"</span></span><br><span class="line">        android:layout_height=<span class="string">"wrap_content"</span></span><br><span class="line">        android:text=<span class="string">"Hello World!"</span> /&gt;</span><br><span class="line"></span><br><span class="line">    &lt;ImageView</span><br><span class="line">        android:id=<span class="string">"@+id/iv_test"</span></span><br><span class="line">        android:layout_width=<span class="string">"wrap_content"</span></span><br><span class="line">        android:layout_height=<span class="string">"wrap_content"</span></span><br><span class="line">        android:layout_centerInParent=<span class="string">"true"</span></span><br><span class="line">        android:src=<span class="string">"@mipmap/ic_launcher"</span> /&gt;</span><br><span class="line">&lt;/RelativeLayout&gt;</span><br></pre></td></tr></table></figure></p>
+<p>这样，我们就将id和view控件对应起来了，但是到这里还没有结束，我们还需要完成使用注解中的id找到对应的控件，然后赋值的过程。</p>
+<h2 id="使用注解id来findviewbyid，并赋值"><a href="#使用注解id来findviewbyid，并赋值" class="headerlink" title="使用注解id来findviewbyid，并赋值"></a>使用注解id来findviewbyid，并赋值</h2><p>我们在Activity的onCreate方法的setContentView(R.layout.activity_main);之后，写一个工具方法，来完成操作。正如之前所说的，我们需要当前要之行操作的view的父容器控件，除此之外我们还需要能够得到对应view对象的那个变量，用来执行赋值操作，这里我们可以传入当前包含该对象的类的实例，这里也就是本activity，然后通过反射来拿到对应的field，同时通过field可以拿到它对应的注解的值。其代码如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">package com.example.jinyi.annotationtest;</span><br><span class="line"></span><br><span class="line">import android.support.annotation.NonNull;</span><br><span class="line">import android.text.TextUtils;</span><br><span class="line">import android.util.Log;</span><br><span class="line">import android.view.View;</span><br><span class="line"></span><br><span class="line">import java.lang.reflect.Field;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by jinyi on 16/5/29.</span><br><span class="line"> */</span><br><span class="line">public class JYInjectUtil &#123;</span><br><span class="line">    public static void injectView(@NonNull Object containerOb, @NonNull View containerView) &#123;</span><br><span class="line">        Field fields[] = containerOb.getClass().getDeclaredFields();</span><br><span class="line">        <span class="keyword">if</span> (null != fields) &#123;</span><br><span class="line">            int id = -1;</span><br><span class="line">            try &#123;</span><br><span class="line">                <span class="keyword">for</span> (Field field : fields) &#123;</span><br><span class="line">                    JYView view = field.getAnnotation(JYView.class);</span><br><span class="line">                    <span class="keyword">if</span> (view == null) &#123;</span><br><span class="line">                        <span class="built_in">continue</span>;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        id = view.value();</span><br><span class="line">                        <span class="keyword">if</span> (id &gt; 0) &#123;</span><br><span class="line">                            boolean accessible = field.isAccessible();</span><br><span class="line">                            field.setAccessible(<span class="literal">true</span>);</span><br><span class="line">                            View subView = containerView.findViewById(id);</span><br><span class="line">                            <span class="keyword">if</span> (subView != null) &#123;</span><br><span class="line">                                field.set(containerOb, subView);</span><br><span class="line">                                field.setAccessible(accessible);</span><br><span class="line">                            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                                throw new RuntimeException(<span class="string">"id="</span> + id + <span class="string">" find view is not exist..."</span>);</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; catch (IllegalAccessException e) &#123;</span><br><span class="line">                String name = containerView.getContext().getResources().getResourceName(id);</span><br><span class="line">                Log.e(<span class="string">"TAG"</span>, <span class="string">"exception happens when injectView...name = "</span> + (TextUtils.isEmpty(name) ? id + <span class="string">""</span> : name));</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在onCreate方法中验证：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">   protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">       super.onCreate(savedInstanceState);</span><br><span class="line">       <span class="built_in">set</span>ContentView(R.layout.activity_main);</span><br><span class="line"></span><br><span class="line">       JYInjectUtil.injectView(this, getWindow().getDecorView());</span><br><span class="line">       Log.e(<span class="string">"test"</span>, <span class="string">"imageView="</span> + imageView + <span class="string">",textView="</span> + textView);</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   //...result <span class="built_in">log</span></span><br><span class="line">   <span class="built_in">test</span>: imageView=android.support.v7.widget.AppCompatImageView&#123;3a35ea59 V.ED.... ......I. 0,0-0,0 <span class="comment">#7f0c0051 app:id/iv_test&#125;,textView=android.support.v7.widget.AppCompatTextView&#123;1032161e V.ED.... ......ID 0,0-0,0 #7f0c0050 app:id/tv_test&#125;</span></span><br></pre></td></tr></table></figure></p>
+<p>我们可以发现，imageview和textview都被成功赋值了。</p>
+<h1 id="Android中其他注解的用法"><a href="#Android中其他注解的用法" class="headerlink" title="Android中其他注解的用法"></a>Android中其他注解的用法</h1><h2 id="Nullness-Annotations"><a href="#Nullness-Annotations" class="headerlink" title="Nullness Annotations"></a>Nullness Annotations</h2><p>这一类注解有两种：<br>1.@Nullable 表示可能为空<br>2.@NonNull 表示不能为空<br>一般用法类似于：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">import android.support.annotation.NonNull;</span><br><span class="line">import android.support.annotation.Nullable;</span><br><span class="line">...</span><br><span class="line">    </span><br><span class="line">    /**</span><br><span class="line">     * Add support <span class="keyword">for</span> inflating the &amp;lt;fragment&gt; tag.</span><br><span class="line">     */</span><br><span class="line">    @Nullable</span><br><span class="line">    @Override</span><br><span class="line">    public View onCreateView(String name, @NonNull Context context, @NonNull AttributeSet attrs) &#123;</span><br><span class="line">        ...</span><br></pre></td></tr></table></figure></p>
+<p>上面的代码中，@NonNull表示参数不能为空，而@Nullable表示返回值可能为空</p>
+<h2 id="Resource-Type-Annotations"><a href="#Resource-Type-Annotations" class="headerlink" title="Resource Type Annotations"></a>Resource Type Annotations</h2><p>这一类注解用于Android中的资源类型区分，比如说在Android中，xml中的String和view类型的变量的id都是int型的，如果他们是参数的话，如果参数类型只有一个int来标识，使用的时候可能会给人带来困惑，到底是传一个String的id进去还是传一个view的id进去？而Resource Type Annotations就是用来做这类区别的，它有如下几种：@StringRes, @DrawableRes, @ColorRes, @InterpolatorRes，@AnyRes。<br>我们只需要在对应的资源id变量之前使用对应的注解，编译器就会自动检查调用时传入的参数是否符合规定。</p>
+<h2 id="IntDef-StringDef-Typedef-Annotations"><a href="#IntDef-StringDef-Typedef-Annotations" class="headerlink" title="IntDef/StringDef: Typedef Annotations"></a>IntDef/StringDef: Typedef Annotations</h2><p>类型注解（IntDef/StringDef: Typedef Annotations）跟上面的有所不同，它更加类似于Java中的Enum(枚举类型)，而按照google文档的说法，Enum在Android中不推荐使用，因为它比一般类型要占用多一倍的内存。具体用法是：使用IntDef或StringDef先定义一个包含几个具体值的集合，并将其作为某个注解类型(@interface)的元注解，然后使用该注解类型去标识对应的参数类型，即可让不在集合内的传参变为非法。也就变相的达到的类似于Enum的功能，代码如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">import android.support.annotation.IntDef;</span><br><span class="line">...</span><br><span class="line">public abstract class ActionBar &#123;</span><br><span class="line">    ...</span><br><span class="line">    @IntDef(&#123;NAVIGATION_MODE_STANDARD, NAVIGATION_MODE_LIST, NAVIGATION_MODE_TABS&#125;)</span><br><span class="line">    @Retention(RetentionPolicy.SOURCE)</span><br><span class="line">    public @interface NavigationMode &#123;&#125;</span><br><span class="line"></span><br><span class="line">    public static final int NAVIGATION_MODE_STANDARD = 0;</span><br><span class="line">    public static final int NAVIGATION_MODE_LIST = 1;</span><br><span class="line">    public static final int NAVIGATION_MODE_TABS = 2;</span><br><span class="line"></span><br><span class="line">    @NavigationMode</span><br><span class="line">    public abstract int getNavigationMode();</span><br><span class="line"></span><br><span class="line">    public abstract void <span class="built_in">set</span>NavigationMode(@NavigationMode int mode);</span><br></pre></td></tr></table></figure></p>
+<p>可以看出，上面定义了NavigationMode之后，如果调用setNavigationMode穿参不是0、1、2之中的任何一个的话，编译器就会在调用时提示错误。</p>
+<h2 id="Threading-Annotations-UiThread-WorkerThread-…"><a href="#Threading-Annotations-UiThread-WorkerThread-…" class="headerlink" title="Threading Annotations: @UiThread, @WorkerThread, …"></a>Threading Annotations: @UiThread, @WorkerThread, …</h2><p>线程注解，用于标识某一个特定的类或者方法，只能在某一类线程中被调用。这类注解包含下面四个类型：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@UiThread</span><br><span class="line">@MainThread</span><br><span class="line">@WorkerThread</span><br><span class="line">@BinderThread</span><br></pre></td></tr></table></figure></p>
+<p>比如：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@WorkerThread</span><br><span class="line">    protected abstract Result <span class="keyword">do</span>InBackground(Params... params);</span><br><span class="line"></span><br><span class="line">    @MainThread</span><br><span class="line">    protected void onProgressUpdate(Progress... values) &#123;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="RGB-Color-Integers"><a href="#RGB-Color-Integers" class="headerlink" title="RGB Color Integers"></a>RGB Color Integers</h2><p>这个是限制color类型参数传入的格式的，比如android.R.color.black和它之际上代表的值是两个，有时候我们需要直接处理它代表的数值，而不是这个颜色的id，就可以用这个注解：@ColorRes<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void <span class="built_in">set</span>TextColor(@ColorInt int color)</span><br></pre></td></tr></table></figure></p>
+<h2 id="Value-Constraints-Size-IntRange-FloatRange"><a href="#Value-Constraints-Size-IntRange-FloatRange" class="headerlink" title="Value Constraints: @Size, @IntRange, @FloatRange"></a>Value Constraints: @Size, @IntRange, @FloatRange</h2><p>这几个注解是范围注解，比如有时候我们希望参数是1～100之间的整数：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void <span class="built_in">set</span>Alpha(@IntRange(from=1,to=100) int alpha) &#123; … &#125;</span><br></pre></td></tr></table></figure></p>
+<p>或者最小为33的整数：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void <span class="built_in">set</span>Alpha(@IntRange(min=33) int alpha) &#123; … &#125;</span><br></pre></td></tr></table></figure></p>
+<p>或者最大为99的整数：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void <span class="built_in">set</span>Alpha(@IntRange(max=99) int alpha) &#123; … &#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Permissions-RequiresPermission"><a href="#Permissions-RequiresPermission" class="headerlink" title="Permissions: @RequiresPermission"></a>Permissions: @RequiresPermission</h2><p>这个是调用需要权限的注解，没什么好说的，需要啥权限就加上，调用如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@RequiresPermission(anyOf = &#123;</span><br><span class="line">    Manifest.permission.ACCESS_COARSE_LOCATION,</span><br><span class="line">    Manifest.permission.ACCESS_FINE_LOCATION&#125;)</span><br><span class="line">public abstract Location getLastKnownLocation(String provider);</span><br></pre></td></tr></table></figure></p>
+<h2 id="Overriding-Methods-CallSuper"><a href="#Overriding-Methods-CallSuper" class="headerlink" title="Overriding Methods: @CallSuper"></a>Overriding Methods: @CallSuper</h2><p>有时候，父类中的某个方法希望强制其子类调用其某个方法，也就是super方法的时候，就可以使用这个注解，如果子类不掉用父类中的方法，则会报错，如:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@CallSuper</span><br><span class="line">    protected void onCreate(@Nullable Bundle savedInstanceState) &#123;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Return-Values-CheckResult"><a href="#Return-Values-CheckResult" class="headerlink" title="Return Values: @CheckResult"></a>Return Values: @CheckResult</h2><p>这个注解，强制方法只能调用某些方法来返回，这个跟之前的强制参数有些类似，如：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@CheckResult(suggest=<span class="string">"#enforcePermission(String,int,int,String)"</span>)</span><br><span class="line">   public abstract int checkPermission(@NonNull String permission, int pid, int uid);</span><br></pre></td></tr></table></figure></p>
+<p>上面如果不调用enforcePermission的话，则会报错</p>
+<h2 id="VisibleForTesting"><a href="#VisibleForTesting" class="headerlink" title="@VisibleForTesting"></a>@VisibleForTesting</h2><p>这个简单，使用它来让一个类或者方法对测试可见</p>
+<h2 id="Keep"><a href="#Keep" class="headerlink" title="@Keep"></a>@Keep</h2><p>根据注解文档描述，这个注解还没有连接到Gradle插件中，但是当在混淆app的时候通过注释方法和类可以被保留。<br>这个便捷的注解就通知混淆器保留对应的方法和类，比如：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class Example &#123; </span><br><span class="line">    @Keep public void <span class="function"><span class="title">doSomething</span></span>() &#123; </span><br><span class="line">        // hopefully this method does something </span><br><span class="line">    &#125; </span><br><span class="line">    ... </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>好了，基本上就这么多，很多注解用了之后还是能给我们带来很多方便的。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+            <a href="/tags/Android源码设计/" rel="tag">#Android源码设计</a>
+          
+            <a href="/tags/注解/" rel="tag">#注解</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/03/原型模式以及java的深-浅拷贝/" rel="next" title="原型模式以及java的深/浅拷贝">
+                <i class="fa fa-chevron-left"></i> 原型模式以及java的深/浅拷贝
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/05/31/Android注解式findViewByID以及注解的几种常见用法/"
+           data-title="Android注解式findViewByID以及注解的几种常见用法" data-url="http:/imoblab.com/2016/05/31/Android注解式findViewByID以及注解的几种常见用法/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://7xrywe.com1.z0.glb.clouddn.com/IMG_0942.JPG"
+               alt="苦咖啡" />
+          <p class="site-author-name" itemprop="name">苦咖啡</p>
+          <p class="site-description motion-element" itemprop="description">热爱摄影和旅行的咖啡君</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#从findViewByID说开去"><span class="nav-number">1.</span> <span class="nav-text">从findViewByID说开去</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本思路"><span class="nav-number">1.1.</span> <span class="nav-text">基本思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#id注解的编写"><span class="nav-number">1.2.</span> <span class="nav-text">id注解的编写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用注解id来findviewbyid，并赋值"><span class="nav-number">1.3.</span> <span class="nav-text">使用注解id来findviewbyid，并赋值</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Android中其他注解的用法"><span class="nav-number">2.</span> <span class="nav-text">Android中其他注解的用法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Nullness-Annotations"><span class="nav-number">2.1.</span> <span class="nav-text">Nullness Annotations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Resource-Type-Annotations"><span class="nav-number">2.2.</span> <span class="nav-text">Resource Type Annotations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IntDef-StringDef-Typedef-Annotations"><span class="nav-number">2.3.</span> <span class="nav-text">IntDef/StringDef: Typedef Annotations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Threading-Annotations-UiThread-WorkerThread-…"><span class="nav-number">2.4.</span> <span class="nav-text">Threading Annotations: @UiThread, @WorkerThread, …</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RGB-Color-Integers"><span class="nav-number">2.5.</span> <span class="nav-text">RGB Color Integers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Value-Constraints-Size-IntRange-FloatRange"><span class="nav-number">2.6.</span> <span class="nav-text">Value Constraints: @Size, @IntRange, @FloatRange</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Permissions-RequiresPermission"><span class="nav-number">2.7.</span> <span class="nav-text">Permissions: @RequiresPermission</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Overriding-Methods-CallSuper"><span class="nav-number">2.8.</span> <span class="nav-text">Overriding Methods: @CallSuper</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Return-Values-CheckResult"><span class="nav-number">2.9.</span> <span class="nav-text">Return Values: @CheckResult</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VisibleForTesting"><span class="nav-number">2.10.</span> <span class="nav-text">@VisibleForTesting</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Keep"><span class="nav-number">2.11.</span> <span class="nav-text">@Keep</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">苦咖啡</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"bottlechain"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js"></script>
+    
+  
+
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

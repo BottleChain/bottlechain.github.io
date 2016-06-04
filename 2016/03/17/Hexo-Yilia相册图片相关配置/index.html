@@ -1,0 +1,717 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="Ty5skhhRUHq1j2JVYO3eI8VwGQimqfqTYjfXfyr0l1E" />
+
+
+
+
+  <meta name="baidu-site-verification" content="JT2EfYAuhG" />
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo,相册,七牛," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="继上一篇文章之后，又搞了一下相册和markdown图片插入。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo-Yilia相册图片相关配置">
+<meta property="og:url" content="http:/imoblab.com/2016/03/17/Hexo-Yilia相册图片相关配置/index.html">
+<meta property="og:site_name" content="往事随风">
+<meta property="og:description" content="继上一篇文章之后，又搞了一下相册和markdown图片插入。">
+<meta property="og:image" content="http://7xrywe.com1.z0.glb.clouddn.com/%E7%9B%B8%E5%86%8C.png">
+<meta property="og:image" content="http://7xrywe.com1.z0.glb.clouddn.com/blog_album_01.png">
+<meta property="og:image" content="http://7xrywe.com1.z0.glb.clouddn.com/blog_album_02.png">
+<meta property="og:updated_time" content="2016-03-22T04:23:58.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo-Yilia相册图片相关配置">
+<meta name="twitter:description" content="继上一篇文章之后，又搞了一下相册和markdown图片插入。">
+<meta name="twitter:image" content="http://7xrywe.com1.z0.glb.clouddn.com/%E7%9B%B8%E5%86%8C.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6263263549242476000,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> Hexo-Yilia相册图片相关配置 | 往事随风 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="http://s6.cnzz.com/stat.php?id=1258038514&web_id=1258038514" type="text/javascript"></script>
+  </div>
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">往事随风</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">热爱摄影和旅行的咖啡君</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-album">
+          <a href="/photo" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-picture-o"></i> <br />
+            
+            相册
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'ZBfkxTy8XN7yuzX9y569','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Hexo-Yilia相册图片相关配置
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-03-17T20:28:12+08:00" content="2016-03-17">
+              2016-03-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/hexo/" itemprop="url" rel="index">
+                    <span itemprop="name">hexo</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/03/17/Hexo-Yilia相册图片相关配置/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/17/Hexo-Yilia相册图片相关配置/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>继上一篇文章之后，又搞了一下相册和markdown图片插入。<br><a id="more"></a></p>
+<h2 id="Yilia相册配置"><a href="#Yilia相册配置" class="headerlink" title="Yilia相册配置"></a>Yilia相册配置</h2><p>貌似磨人的hexo没有相册，Yilia原作者使用的instagram来作为相册的来源。看到网上很多人推荐用七牛做图床，于是百度了一下，搞成了相册。主要参考下面两篇文章：<br>1、<a href="github.com/BottleChain/bottlechain/master/photos">hexo主题中添加相册功能</a><br>2、<a href="http://blog.shiqichan.com/use-qiniu-store-image-for-hexo/" target="_blank" rel="external">使用七牛为Hexo存储图片</a></p>
+<p>其实主要的实现流程是按照<a href="github.com/BottleChain/bottlechain/master/photos">hexo主题中添加相册功能</a>来做的，只是仔细看文章就会发现，作者的做法是用github的仓库作为图床，而我们这里想使用七牛做为图床，文章中有一个yourBlog\themes\yilia\source\js\photo.js中，填写了github的代码：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">li += <span class="string">'&lt;li&gt;&lt;div class="img-box"&gt;'</span> +</span><br><span class="line">                       <span class="string">'&lt;a class="img-bg" rel="example_group" href="https://github.com/lwzhang/blog/blob/master/photos/'</span> + data[i] + <span class="string">'?raw=true"&gt;&lt;/a&gt;'</span> +</span><br><span class="line">                       <span class="string">'&lt;img lazy-src="https://github.com/lwzhang/blog/blob/master/photos/'</span> + data[i] + <span class="string">'?raw=true" /&gt;'</span> +</span><br><span class="line">                       <span class="string">'&lt;/li&gt;'</span>;</span><br></pre></td></tr></table></figure></p>
+<p>然后我将其中的<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/lwzhang/blog/blob/master/photos/</span><br></pre></td></tr></table></figure></p>
+<p>替换成了我自己七牛空间的外链的公共部分(即除去xxx.jpg的部分)：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://7xrywe.com1.z0.glb.clouddn.com/</span><br></pre></td></tr></table></figure></p>
+<p>然后，部署到本地看一下。。。发现相册是有图片显示了。。。但是不要高兴的太早，因为这时候的图片居然TMD都是原始大小。。这个当然不行。希望的效果是相册打开都是小图，然后点击才出现大图。于是乎参考第二篇文章<a href="http://blog.shiqichan.com/use-qiniu-store-image-for-hexo/" target="_blank" rel="external">使用七牛为Hexo存储图片</a>。第二篇文章中讲了在文章中如何配置显示图片的大小。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">img, video</span><br><span class="line">  max-width 300px</span><br><span class="line">  height auto</span><br><span class="line">  border none</span><br></pre></td></tr></table></figure></p>
+<p>实际上就是这里，让图片宽度的最大值为300，高度自动，图片会保持比例。。具体我这里是修改的/themes/yilia/source/css/_partial/article.styl这个文件，里面有一个img属性，原始为：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">img&#123;</span><br><span class="line">  max-width: 100%;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我将其改为：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">img&#123;</span><br><span class="line">  max-width: 300px;</span><br><span class="line">  height: auto;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后发布，就有了如下的效果：<br><img src="http://7xrywe.com1.z0.glb.clouddn.com/%E7%9B%B8%E5%86%8C.png" alt="相册效果"><br>但是问题是。。。长宽不一样的图片在一起，还是有点问题。。。这里先放一放，后面有时间再修改，想做一个图片截取之类的效果。</p>
+<h2 id="后期修改的裁剪效果"><a href="#后期修改的裁剪效果" class="headerlink" title="后期修改的裁剪效果"></a>后期修改的裁剪效果</h2><p>上面提到的方法不太爽的地方是，除了相册之外，在文章中的图片也会因为上面的300px而缩小。。。so，自己在网上搜索了一下，发现了一个解决方法，原来七牛是可以在外链上直接加上裁剪效果，甚至可以设置大小。。。太爽了，详见这篇文章：<a href="http://jingyan.baidu.com/article/0eb457e50f9bcc03f0a9055d.html" target="_blank" rel="external">如何使用七牛制作图片水印及缩略图</a>。于是乎修改了一下，上面的photo.js添加的代码：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">li += <span class="string">'&lt;li&gt;&lt;div class="img-box"&gt;'</span> +</span><br><span class="line">                       <span class="string">'&lt;a class="img-bg" rel="example_group" href="https://github.com/lwzhang/blog/blob/master/photos/'</span> + data[i] + <span class="string">'?raw=true"&gt;&lt;/a&gt;'</span> +</span><br><span class="line">                       <span class="string">'&lt;img lazy-src="https://github.com/lwzhang/blog/blob/master/photos/'</span> + data[i] + <span class="string">'?raw=true" /&gt;'</span> +</span><br><span class="line">                       <span class="string">'&lt;/li&gt;'</span>;</span><br></pre></td></tr></table></figure></p>
+<p>其中，img-bg是相册插件fancybox点击之后的大图的效果，这个不需要修改和裁剪，但是后一个lazy-src，则是在相册中显示的缩略图的效果，于是将lazy-src修改为：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lazy-src=<span class="string">"http://7xrywe.com1.z0.glb.clouddn.com/' + data[i] + '?imageView2/1/w/300/h/300/q/100&amp;raw=true"</span></span><br></pre></td></tr></table></figure></p>
+<p>然后再将上面修改的article.styl中的img属性恢复原样。。。大功告成。。。效果如下：<br><img src="http://7xrywe.com1.z0.glb.clouddn.com/blog_album_01.png" alt="相册效果1"><br><img src="http://7xrywe.com1.z0.glb.clouddn.com/blog_album_02.png" alt="相册效果2"></p>
+<p>关于相册这里，操作还要注意一点就是，每次想往相册里添加照片时，需要做这几步：<br>1、把图片放到\photos\文件夹中<br>2、到\source\photo\中运行 node tools.js，实际上是在该文件夹下生成了一个output.json文件，里面包含了最新的图片文件名，这里要注意的是图片文件名不能用中文，否则跟七牛空间解析的名字会不一样，中文七牛解析的结果类似于%%adb%d.jpg<br>output.json类似于：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">  <span class="string">"AAAA.JPG"</span>,</span><br><span class="line">  <span class="string">"BBBB.JPG"</span>,</span><br><span class="line">  <span class="string">"CCCC.JPG"</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
+<p>3、把同名的图片上传到七牛空间中<br>然后同步即可看到相册更新结果。</p>
+<h2 id="Markdown中引用七牛外链图片的方法"><a href="#Markdown中引用七牛外链图片的方法" class="headerlink" title="Markdown中引用七牛外链图片的方法"></a>Markdown中引用七牛外链图片的方法</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![图片名字xyz](http://abc/edg.jpg)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hexo/" rel="tag">#Hexo</a>
+          
+            <a href="/tags/相册/" rel="tag">#相册</a>
+          
+            <a href="/tags/七牛/" rel="tag">#七牛</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/03/17/Hexo操作备忘/" rel="next" title="Hexo操作备忘">
+                <i class="fa fa-chevron-left"></i> Hexo操作备忘
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/03/18/Hexo-多说配置/" rel="prev" title="Hexo/多说配置">
+                Hexo/多说配置 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/03/17/Hexo-Yilia相册图片相关配置/"
+           data-title="Hexo-Yilia相册图片相关配置" data-url="http:/imoblab.com/2016/03/17/Hexo-Yilia相册图片相关配置/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://7xrywe.com1.z0.glb.clouddn.com/IMG_0942.JPG"
+               alt="苦咖啡" />
+          <p class="site-author-name" itemprop="name">苦咖啡</p>
+          <p class="site-description motion-element" itemprop="description">热爱摄影和旅行的咖啡君</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Yilia相册配置"><span class="nav-number">1.</span> <span class="nav-text">Yilia相册配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#后期修改的裁剪效果"><span class="nav-number">2.</span> <span class="nav-text">后期修改的裁剪效果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Markdown中引用七牛外链图片的方法"><span class="nav-number">3.</span> <span class="nav-text">Markdown中引用七牛外链图片的方法</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">苦咖啡</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"bottlechain"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js"></script>
+    
+  
+
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

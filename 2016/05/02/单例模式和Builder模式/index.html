@@ -1,0 +1,724 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="Ty5skhhRUHq1j2JVYO3eI8VwGQimqfqTYjfXfyr0l1E" />
+
+
+
+
+  <meta name="baidu-site-verification" content="JT2EfYAuhG" />
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android,Android源码设计,单例,Builder," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="&amp;#160; &amp;#160; &amp;#160; &amp;#160;前段时间一些个人的事情搞的焦头烂额，好在终于尘埃落定，空出时间来继续学习。。。&amp;#160; &amp;#160; &amp;#160; &amp;#160;今天想回顾一下单例模式和Builder模式，基本上也是很常见的。为啥要把这两个模式放在一起，其实原因很简单：因为它俩经常搭配使用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="单例模式和Builder模式">
+<meta property="og:url" content="http:/imoblab.com/2016/05/02/单例模式和Builder模式/index.html">
+<meta property="og:site_name" content="往事随风">
+<meta property="og:description" content="&amp;#160; &amp;#160; &amp;#160; &amp;#160;前段时间一些个人的事情搞的焦头烂额，好在终于尘埃落定，空出时间来继续学习。。。&amp;#160; &amp;#160; &amp;#160; &amp;#160;今天想回顾一下单例模式和Builder模式，基本上也是很常见的。为啥要把这两个模式放在一起，其实原因很简单：因为它俩经常搭配使用。">
+<meta property="og:updated_time" content="2016-05-03T14:03:32.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="单例模式和Builder模式">
+<meta name="twitter:description" content="&amp;#160; &amp;#160; &amp;#160; &amp;#160;前段时间一些个人的事情搞的焦头烂额，好在终于尘埃落定，空出时间来继续学习。。。&amp;#160; &amp;#160; &amp;#160; &amp;#160;今天想回顾一下单例模式和Builder模式，基本上也是很常见的。为啥要把这两个模式放在一起，其实原因很简单：因为它俩经常搭配使用。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6263263549242476000,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 单例模式和Builder模式 | 往事随风 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="http://s6.cnzz.com/stat.php?id=1258038514&web_id=1258038514" type="text/javascript"></script>
+  </div>
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">往事随风</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">热爱摄影和旅行的咖啡君</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-album">
+          <a href="/photo" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-picture-o"></i> <br />
+            
+            相册
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'ZBfkxTy8XN7yuzX9y569','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                单例模式和Builder模式
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-05-02T17:47:42+08:00" content="2016-05-02">
+              2016-05-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Androd/" itemprop="url" rel="index">
+                    <span itemprop="name">Androd</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Androd/设计模式/" itemprop="url" rel="index">
+                    <span itemprop="name">设计模式</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/05/02/单例模式和Builder模式/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/02/单例模式和Builder模式/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<p>&#160; &#160; &#160; &#160;前段时间一些个人的事情搞的焦头烂额，好在终于尘埃落定，空出时间来继续学习。。。<br>&#160; &#160; &#160; &#160;今天想回顾一下单例模式和Builder模式，基本上也是很常见的。为啥要把这两个模式放在一起，其实原因很简单：因为它俩经常搭配使用。<br><a id="more"></a></p>
+<h1 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h1><p>&#160; &#160; &#160; &#160;单例模式用的非常多了，网上也有很多种总结，什么7种单例、懒汉、饿汉、双重检查锁定等等。在这里就不讲那么多了，只把比较常用且实用的在这里简述一下。</p>
+<h2 id="静态内部类单例模式"><a href="#静态内部类单例模式" class="headerlink" title="静态内部类单例模式"></a>静态内部类单例模式</h2><p>&#160; &#160; &#160; &#160;这种单例模式应该算是用得最多的了吧，除去写代码的时候不怎么讲究的饿汉式写法之外，一般都使用这种方式。先来看看具体做法：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public class Imageloader &#123;</span><br><span class="line">    private static final String TAG = Imageloader.class.getSimpleName();</span><br><span class="line">    //private ImageCache mImageCache;</span><br><span class="line"></span><br><span class="line">    /***********************</span><br><span class="line">     * 单例模式</span><br><span class="line">     **************************/</span><br><span class="line">    private static class ImageloaderHoder &#123;</span><br><span class="line">        private static Imageloader INSTANCE = new Imageloader();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static Imageloader <span class="function"><span class="title">instance</span></span>() &#123;</span><br><span class="line">        <span class="built_in">return</span> ImageloaderHoder.INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /*为了防止反序列化时生成新的对象而需要重写的方法*/</span><br><span class="line">    private Object <span class="built_in">read</span>Resolve() throws ObjectStreamException &#123;</span><br><span class="line">    	<span class="built_in">return</span> ImageloaderHoder.INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">    /***  more code  ***/</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>&#160; &#160; &#160; &#160;好处也是很显而易见的，由于java中静态对象将在该类第一次加载时被初始化，所以只有当instance()方法被调用时，INSTANCE才会被分配内存空间并初始化，达到了懒加载的目的，既是线程安全的同时也保证了单例的特点，同时不存在加锁等会影响性能的缺点。这种方法的缺点就是需要在原本类中增加一个静态内部类，作为单例对象的持有者。</p>
+<h2 id="枚举单例模式"><a href="#枚举单例模式" class="headerlink" title="枚举单例模式"></a>枚举单例模式</h2><p>&#160; &#160; &#160; &#160;枚举单例模式实际使用中用的比较少，这里主要的原因应该还是由于枚举的性质是在java 1.5之后才引入的，所以使用时需要稍注意版本。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class SingletonEnum&#123;</span><br><span class="line">	INSTANCE;</span><br><span class="line">	public void <span class="function"><span class="title">doSomething</span></span>()&#123;</span><br><span class="line">		// <span class="keyword">do</span> something...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>&#160; &#160; &#160; &#160;熟悉枚举的同学都知道，枚举类中的对象就是该类的一个实例，使用枚举来实现单例的好处比上面的静态内部类多一个，那就是枚举会自己处理反序列化的问题，而不需要去重写readResolve方法。</p>
+<h1 id="Builder模式"><a href="#Builder模式" class="headerlink" title="Builder模式"></a>Builder模式</h1><p>&#160; &#160; &#160; &#160;Builder模式也用的很多，通常Builder模式被用来生成一个复杂的对象，该对象生成的过程中需要进行多个参数的初始化，而且可能这些初始化的先后次序不同将导致对象的性质发生变化。简而言之，Builder类就是为了初始化一个复杂对象而产生的。<br>比如有一个类A如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class A&#123;</span><br><span class="line">	private String a;</span><br><span class="line">	private String b;</span><br><span class="line">	private String c;</span><br><span class="line"></span><br><span class="line">	//...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>现在有一个简单的需求，要给类A中的三个成员变量a,b,c分别初始化之后，才能使用A的实例。那么一般的写法可能是下面这样的：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">public class A&#123;</span><br><span class="line">	private String a;</span><br><span class="line">	private String b;</span><br><span class="line">	private String c;</span><br><span class="line"></span><br><span class="line">	public void <span class="built_in">set</span>A(String x)&#123;</span><br><span class="line">		a = x;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void <span class="built_in">set</span>B(String x)&#123;</span><br><span class="line">		b = x;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void <span class="built_in">set</span>A(String x)&#123;</span><br><span class="line">		c = x;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	//...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/*******使用*******/</span><br><span class="line">&#123;</span><br><span class="line">    A ma = new A();</span><br><span class="line"></span><br><span class="line">    ma.setA(<span class="string">"abc"</span>);</span><br><span class="line">    ma.setB(<span class="string">"abc"</span>);</span><br><span class="line">    ma.setC(<span class="string">"abc"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>&#160; &#160; &#160; &#160;上面的代码非常简单，看着貌似没什么问题。实际上A类的初始化过程就是三个String的赋值而已，如果这几个过程不仅仅是赋值，可能中间还涉及到很多其他的复杂操作和线程问题。比如在setA之后，另一个线程又调用了setA就会导致出问题。。。那么怎么做呢，有些同学会说，这个好办，我直接把a,b,c的初始化用构造函数来做不就行了。。但是注意的一点是，如果在需要初始化很多变量的情况下，把这些工作都放到构造中去做实际上是不合适的。首先构造函数就非常臃肿，其次一旦后续需要扩展A类，增加或者删减一些初始化变量时，需要修改所有A的构造函数调用的地方，对扩展不友好。。。那么怎么做？方法是使用Builder模式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line">public class A&#123;</span><br><span class="line">	private String a;</span><br><span class="line">	private String b;</span><br><span class="line">	private String c;</span><br><span class="line">	private AConfig mConfig;</span><br><span class="line"></span><br><span class="line">	public void init(AConfig config)&#123;</span><br><span class="line">		mConfig = config;</span><br><span class="line">		checkConfig();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private void <span class="function"><span class="title">checkConfig</span></span>()&#123;</span><br><span class="line">		<span class="keyword">if</span>(mConfig == null)&#123;</span><br><span class="line">			Log.e(<span class="string">"null config object...return);</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		a = mConfig.aConf;</span><br><span class="line">		b = mConfig.bConf;</span><br><span class="line">		c = mConfig.cConf;</span><br><span class="line">		// more code...</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	// more code...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class AConfig&#123;</span><br><span class="line">	public String a;</span><br><span class="line">	public String b;</span><br><span class="line">	public String c;</span><br><span class="line"></span><br><span class="line">	private AConfig()&#123;&#125;</span><br><span class="line"></span><br><span class="line">	public staitc class Builder&#123;</span><br><span class="line">		private String ba;</span><br><span class="line">		private String bb;</span><br><span class="line">		private String bc;</span><br><span class="line"></span><br><span class="line">		public Builder buildA(String x)&#123;</span><br><span class="line">			ba = x;</span><br><span class="line">		&#125;</span><br><span class="line">		public Builder buildB(String x)&#123;</span><br><span class="line">			bb = x;</span><br><span class="line">		&#125;</span><br><span class="line">		public Builder buildC(String x)&#123;</span><br><span class="line">			bc = x;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		private applyConfig(AConfig config)&#123;</span><br><span class="line">			config.a = this.ba;</span><br><span class="line">			config.b = this.bb;</span><br><span class="line">			config.c = this.bc;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		public AConfig build()&#123;</span><br><span class="line">			AConfig config = new AConfig();</span><br><span class="line"></span><br><span class="line">			applyConfig(config);</span><br><span class="line"></span><br><span class="line">			return config;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">/*******使用*******/</span><br><span class="line">&#123;</span><br><span class="line">    A ma = new A();</span><br><span class="line">    </span><br><span class="line">    AConfig.Builder builder = new AConfig.Builder();</span><br><span class="line"></span><br><span class="line">    AConfig config = builder.buildA("</span>a content<span class="string">").buildB("</span>b content<span class="string">").buildC("</span>c content<span class="string">").build();</span><br><span class="line"></span><br><span class="line">    ma.init(config);</span><br><span class="line"></span><br><span class="line">    //use ma对象.....</span><br><span class="line">&#125;</span></span><br></pre></td></tr></table></figure></p>
+<p>&#160; &#160; &#160; &#160;使用Builder模式之后，就解决了初始化不同步，且将对象的构建和初始化解藕开来。</p>
+<h1 id="单例和Builder模式的结合"><a href="#单例和Builder模式的结合" class="headerlink" title="单例和Builder模式的结合"></a>单例和Builder模式的结合</h1><p>&#160; &#160; &#160; &#160;这个就没啥好说的了，基本就是将上面的new部分，替换成单例即可。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+            <a href="/tags/Android源码设计/" rel="tag">#Android源码设计</a>
+          
+            <a href="/tags/单例/" rel="tag">#单例</a>
+          
+            <a href="/tags/Builder/" rel="tag">#Builder</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/03/19/简易ImageLoader-面向对象六大原则应用/" rel="next" title="简易ImageLoader--面向对象六大原则应用">
+                <i class="fa fa-chevron-left"></i> 简易ImageLoader--面向对象六大原则应用
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/03/原型模式以及java的深-浅拷贝/" rel="prev" title="原型模式以及java的深/浅拷贝">
+                原型模式以及java的深/浅拷贝 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/05/02/单例模式和Builder模式/"
+           data-title="单例模式和Builder模式" data-url="http:/imoblab.com/2016/05/02/单例模式和Builder模式/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://7xrywe.com1.z0.glb.clouddn.com/IMG_0942.JPG"
+               alt="苦咖啡" />
+          <p class="site-author-name" itemprop="name">苦咖啡</p>
+          <p class="site-description motion-element" itemprop="description">热爱摄影和旅行的咖啡君</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#单例模式"><span class="nav-number">1.</span> <span class="nav-text">单例模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#静态内部类单例模式"><span class="nav-number">1.1.</span> <span class="nav-text">静态内部类单例模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#枚举单例模式"><span class="nav-number">1.2.</span> <span class="nav-text">枚举单例模式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Builder模式"><span class="nav-number">2.</span> <span class="nav-text">Builder模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#单例和Builder模式的结合"><span class="nav-number">3.</span> <span class="nav-text">单例和Builder模式的结合</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">苦咖啡</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"bottlechain"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js"></script>
+    
+  
+
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>
