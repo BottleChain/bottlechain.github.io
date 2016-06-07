@@ -1,0 +1,713 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="Ty5skhhRUHq1j2JVYO3eI8VwGQimqfqTYjfXfyr0l1E" />
+
+
+
+
+  <meta name="baidu-site-verification" content="JT2EfYAuhG" />
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android,fragment," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="在Activity中，我们可以很容易的捕捉到用户按的back(回退)键，但是在fragment中，就没有那么容易了。因为在activity中，有诸如onKeyDown, onKeyUp, onBackPressed等方法，可以很容易的捕捉到back键的动作。要搞清楚怎么才能完成这个功能，就需要先研究一下Android中的KeyEvent的处理流程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android中keyEvent的处理传递流程--fragment获取back键的方法">
+<meta property="og:url" content="http:/imoblab.com/2016/06/06/fragment获取back键的方法/index.html">
+<meta property="og:site_name" content="往事随风">
+<meta property="og:description" content="在Activity中，我们可以很容易的捕捉到用户按的back(回退)键，但是在fragment中，就没有那么容易了。因为在activity中，有诸如onKeyDown, onKeyUp, onBackPressed等方法，可以很容易的捕捉到back键的动作。要搞清楚怎么才能完成这个功能，就需要先研究一下Android中的KeyEvent的处理流程。">
+<meta property="og:image" content="http://7xrywe.com1.z0.glb.clouddn.com/Android.KeyEvent.jpg">
+<meta property="og:image" content="http://7xrywe.com1.z0.glb.clouddn.com/activity.dispatchKeyEvent.jpg">
+<meta property="og:image" content="http://7xrywe.com1.z0.glb.clouddn.com/phonewindow.superdispatchkeyevent.jpg">
+<meta property="og:image" content="http://7xrywe.com1.z0.glb.clouddn.com/viewgroup.dispatchkeyevent.jpg">
+<meta property="og:updated_time" content="2016-06-07T15:16:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android中keyEvent的处理传递流程--fragment获取back键的方法">
+<meta name="twitter:description" content="在Activity中，我们可以很容易的捕捉到用户按的back(回退)键，但是在fragment中，就没有那么容易了。因为在activity中，有诸如onKeyDown, onKeyUp, onBackPressed等方法，可以很容易的捕捉到back键的动作。要搞清楚怎么才能完成这个功能，就需要先研究一下Android中的KeyEvent的处理流程。">
+<meta name="twitter:image" content="http://7xrywe.com1.z0.glb.clouddn.com/Android.KeyEvent.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6263263549242476000,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> Android中keyEvent的处理传递流程--fragment获取back键的方法 | 往事随风 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="http://s6.cnzz.com/stat.php?id=1258038514&web_id=1258038514" type="text/javascript"></script>
+  </div>
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">往事随风</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">热爱摄影和旅行的咖啡君</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-album">
+          <a href="/photo" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-picture-o"></i> <br />
+            
+            相册
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'ZBfkxTy8XN7yuzX9y569','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Android中keyEvent的处理传递流程--fragment获取back键的方法
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-06-06T18:48:28+08:00" content="2016-06-06">
+              2016-06-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Androd/" itemprop="url" rel="index">
+                    <span itemprop="name">Androd</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/06/06/fragment获取back键的方法/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/06/06/fragment获取back键的方法/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在Activity中，我们可以很容易的捕捉到用户按的back(回退)键，但是在fragment中，就没有那么容易了。因为在activity中，有诸如onKeyDown, onKeyUp, onBackPressed等方法，可以很容易的捕捉到back键的动作。要搞清楚怎么才能完成这个功能，就需要先研究一下Android中的KeyEvent的处理流程。<br><a id="more"></a></p>
+<h1 id="Android中的KeyEvent"><a href="#Android中的KeyEvent" class="headerlink" title="Android中的KeyEvent"></a>Android中的KeyEvent</h1><p>我们都应该知道，Android的一个界面，比如一个Activity，它的Layout层级结构中，最顶层的实际上是一个DecorView，DecorView在PhoneWindow类中的一个私有内部类，外部可以通过拿到PhoneWindow的实例，然后通过getDecor()方法来拿到DecorView；PhoneWindow是Window类的唯一实现类，而在Activity中持有一个Window的实例mWindow，可以这样认为，mWindow就是Activity显示界面的整个集合体，而在这个集合体中，最上层的就是一个DecorView，DecorView实际上是继承自FrameLayout。</p>
+<h2 id="DecorView的KeyEvent处理流程"><a href="#DecorView的KeyEvent处理流程" class="headerlink" title="DecorView的KeyEvent处理流程"></a>DecorView的KeyEvent处理流程</h2><p>由于DecorView的顶层地位，我们可以从DecorView的dispatchKeyEvent方法来看起。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">      public boolean dispatchKeyEvent(KeyEvent event) &#123;</span><br><span class="line">          final int keyCode = event.getKeyCode();</span><br><span class="line">          final int action = event.getAction();</span><br><span class="line">          final boolean isDown = action == KeyEvent.ACTION_DOWN;</span><br><span class="line"></span><br><span class="line">          <span class="keyword">if</span> (isDown &amp;&amp; (event.getRepeatCount() == 0)) &#123;</span><br><span class="line">              // First handle chording of panel key: <span class="keyword">if</span> a panel key is held</span><br><span class="line">              // but not released, try to execute a shortcut <span class="keyword">in</span> it.</span><br><span class="line">              <span class="keyword">if</span> ((mPanelChordingKey &gt; 0) &amp;&amp; (mPanelChordingKey != keyCode)) &#123;</span><br><span class="line">                  boolean handled = dispatchKeyShortcutEvent(event);</span><br><span class="line">                  <span class="keyword">if</span> (handled) &#123;</span><br><span class="line">                      <span class="built_in">return</span> <span class="literal">true</span>;</span><br><span class="line">                  &#125;</span><br><span class="line">              &#125;</span><br><span class="line"></span><br><span class="line">              // If a panel is open, perform a shortcut on it without the</span><br><span class="line">              // chorded panel key</span><br><span class="line">              <span class="keyword">if</span> ((mPreparedPanel != null) &amp;&amp; mPreparedPanel.isOpen) &#123;</span><br><span class="line">                  <span class="keyword">if</span> (performPanelShortcut(mPreparedPanel, keyCode, event, 0)) &#123;</span><br><span class="line">                      <span class="built_in">return</span> <span class="literal">true</span>;</span><br><span class="line">                  &#125;</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">          <span class="keyword">if</span> (!isDestroyed()) &#123;</span><br><span class="line">              final Callback cb = getCallback();</span><br><span class="line">              final boolean handled = cb != null &amp;&amp; mFeatureId &lt; 0 ? cb.dispatchKeyEvent(event)</span><br><span class="line">                      : super.dispatchKeyEvent(event);</span><br><span class="line">              <span class="keyword">if</span> (handled) &#123;</span><br><span class="line">                  <span class="built_in">return</span> <span class="literal">true</span>;</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">          <span class="built_in">return</span> isDown ? PhoneWindow.this.onKeyDown(mFeatureId, event.getKeyCode(), event)</span><br><span class="line">                  : PhoneWindow.this.onKeyUp(mFeatureId, event.getKeyCode(), event);</span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面的代码看起来还是有点不明白，看一下下面的流程图：<br> <img src="http://7xrywe.com1.z0.glb.clouddn.com/Android.KeyEvent.jpg" alt="DecorView的KeyEvent处理流程图"></p>
+<p>不难看出，实际上就是这么几步：<br>1、先交给panel来处理<br>2、panel处理不了的，且能够拿到当前对应的callback的（实际上这个callback就是activity，activity实现了KeyEvent.Callback接口），执行activity的dispatchKeyEvent方法<br>3、如果拿不到callback或者callback为null的，则执行super.dispatchKeyEvent，由于decorView是一个framelayout，所以这里实际上执行的是ViewGroup的dispatchKeyEvent方法。<br>4、如果上面两步都没有消费掉事件，都返回false，则根据事件是否是按下的事件，来决定执行PhoneWindow的onKeyDown或者是onKeyUp方法。</p>
+<h2 id="Activity中的dispatchKeyEvent方法执行流程"><a href="#Activity中的dispatchKeyEvent方法执行流程" class="headerlink" title="Activity中的dispatchKeyEvent方法执行流程"></a>Activity中的dispatchKeyEvent方法执行流程</h2><p>从DecorView中可以看出，上面有一步且是比较重要的一步，会涉及到Activity的dispatchKeyEvent方法，于是我们来看一下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public boolean dispatchKeyEvent(KeyEvent event) &#123;</span><br><span class="line">    onUserInteraction();</span><br><span class="line"></span><br><span class="line">    // Let action bars open menus <span class="keyword">in</span> response to the menu key prioritized over</span><br><span class="line">    // the window handling it</span><br><span class="line">    <span class="keyword">if</span> (event.getKeyCode() == KeyEvent.KEYCODE_MENU &amp;&amp;</span><br><span class="line">            mActionBar != null &amp;&amp; mActionBar.onMenuKeyEvent(event)) &#123;</span><br><span class="line">        <span class="built_in">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Window win = getWindow();</span><br><span class="line">    <span class="keyword">if</span> (win.superDispatchKeyEvent(event)) &#123;</span><br><span class="line">        <span class="built_in">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    View decor = mDecor;</span><br><span class="line">    <span class="keyword">if</span> (decor == null) decor = win.getDecorView();</span><br><span class="line">    <span class="built_in">return</span> event.dispatch(this, decor != null</span><br><span class="line">            ? decor.getKeyDispatcherState() : null, this);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>同样的，来看一下流程：<br><img src="http://7xrywe.com1.z0.glb.clouddn.com/activity.dispatchKeyEvent.jpg" alt="activity.dispatchKeyEvent处理流程图"></p>
+<p>activity这边比较简单，实际上就是交给了PhoneWindow的superdispatchKeyEvent方法来处理，如果没有hold住，则继续教给KeyEvent本身的dispatch方法来处理，我们继续看一下PhoneWindow的superdispatchKeyEvent方法是怎样的。</p>
+<h2 id="PhoneWindow的superdispatchKeyEvent方法"><a href="#PhoneWindow的superdispatchKeyEvent方法" class="headerlink" title="PhoneWindow的superdispatchKeyEvent方法"></a>PhoneWindow的superdispatchKeyEvent方法</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">   public boolean superDispatchKeyEvent(KeyEvent event) &#123;</span><br><span class="line">       <span class="built_in">return</span> mDecor.superDispatchKeyEvent(event);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>DecorView中的superDispatchKeyEvent方法:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">public boolean superDispatchKeyEvent(KeyEvent event) &#123;</span><br><span class="line">            <span class="keyword">if</span> (super.dispatchKeyEvent(event)) &#123;</span><br><span class="line">                <span class="built_in">return</span> <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            // Not handled by the view hierarchy, does the action bar want it</span><br><span class="line">            // to cancel out of something special?</span><br><span class="line">            <span class="keyword">if</span> (event.getKeyCode() == KeyEvent.KEYCODE_BACK) &#123;</span><br><span class="line">                final int action = event.getAction();</span><br><span class="line">                // Back cancels action modes first.</span><br><span class="line">                <span class="keyword">if</span> (mActionMode != null) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (action == KeyEvent.ACTION_UP) &#123;</span><br><span class="line">                        mActionMode.finish();</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="built_in">return</span> <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                // Next collapse any expanded action views.</span><br><span class="line">                <span class="keyword">if</span> (mActionBar != null &amp;&amp; mActionBar.hasExpandedActionView()) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (action == KeyEvent.ACTION_UP) &#123;</span><br><span class="line">                        mActionBar.collapseActionView();</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="built_in">return</span> <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="built_in">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure></p>
+<p><div align="center" style="width=200px;margin=100px;"><br><img src="http://7xrywe.com1.z0.glb.clouddn.com/phonewindow.superdispatchkeyevent.jpg" style="display:block;width:30%;"><br></div><br>可以看出，PhoneWindow的superDispatchKeyEvent实际上调用的是DecorView的superDispatchKeyEvent方法，而DecorView中会先将事件扔到ViewGroup中的dispatchKeyEvent方法中去，如果ViewGroup也没有hold住，则会判断ActionBar会不会消费掉该事件。这里重点关注一下ViewGroup中的dispatchKeyEvent是怎样运转的：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">   public boolean dispatchKeyEvent(KeyEvent event) &#123;</span><br><span class="line">       <span class="keyword">if</span> (mInputEventConsistencyVerifier != null) &#123;</span><br><span class="line">           mInputEventConsistencyVerifier.onKeyEvent(event, 1);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">if</span> ((mPrivateFlags &amp; (PFLAG_FOCUSED | PFLAG_HAS_BOUNDS))</span><br><span class="line">               == (PFLAG_FOCUSED | PFLAG_HAS_BOUNDS)) &#123;</span><br><span class="line">           <span class="keyword">if</span> (super.dispatchKeyEvent(event)) &#123;</span><br><span class="line">               <span class="built_in">return</span> <span class="literal">true</span>;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125; <span class="keyword">else</span> <span class="keyword">if</span> (mFocused != null &amp;&amp; (mFocused.mPrivateFlags &amp; PFLAG_HAS_BOUNDS)</span><br><span class="line">               == PFLAG_HAS_BOUNDS) &#123;</span><br><span class="line">           <span class="keyword">if</span> (mFocused.dispatchKeyEvent(event)) &#123;</span><br><span class="line">               <span class="built_in">return</span> <span class="literal">true</span>;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">if</span> (mInputEventConsistencyVerifier != null) &#123;</span><br><span class="line">           mInputEventConsistencyVerifier.onUnhandledEvent(event, 1);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="built_in">return</span> <span class="literal">false</span>;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p><div align="center" style="width=200px;margin=100px;"><br><img src="http://7xrywe.com1.z0.glb.clouddn.com/viewgroup.dispatchkeyevent.jpg" style="display:block;width:50%;"><br></div><br>实际上，ViewGroup的dispatchKeyEvent会将事件扔给它内部的焦点子view(如果有)的dispatchKeyEvent方法去处理，而在这个方法里，会将事件扔给该view的OnKeyListener的onKey方法去处理。看到这里事件上已经明白了，实际上Activity的按键事件，最终还是会落实到View上，如果View是焦点View，而且给它设置的OnKeyListener的话，则事件会转到Listener的onKey方法里面来。<br></p>
+<h2 id="按键事件小结"><a href="#按键事件小结" class="headerlink" title="按键事件小结"></a>按键事件小结</h2><p>看到这里，可以总结一下，一个view如果要能响应到按键事件的话，所需要的几个条件：<br>1、该view是该按键事件的焦点view<br>2、该view设置了OnKeyListener监听<br>3、事件在之前没有被拦截</p>
+<h1 id="fragment中接收KeyEvent的方法"><a href="#fragment中接收KeyEvent的方法" class="headerlink" title="fragment中接收KeyEvent的方法"></a>fragment中接收KeyEvent的方法</h1><p>根据上面的分析，不难发现，基本上大多数的按键事件，除了一些menu、panel或者actionbar上的按键，基本最终都会落实到某个焦点的子view上。所以我们只要能想办法获取到当前fragment的跟view，然后让其成为焦点，然后事先给这个view设置OnKeyListener，就可以在监听的onKey方法中响应到这个按键的事件。下面来看看具体做法：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">private void <span class="function"><span class="title">setOnKeyListener</span></span>() &#123;</span><br><span class="line">	getView().setFocusableInTouchMode(<span class="literal">true</span>);</span><br><span class="line">    getView().requestFocus();</span><br><span class="line">    getView().setOnKeyListener(new View.<span class="function"><span class="title">OnKeyListener</span></span>() &#123;</span><br><span class="line">        @Override</span><br><span class="line">        public boolean onKey(View v, int keyCode, KeyEvent event) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (event.getAction() == KeyEvent.ACTION_UP &amp;&amp; keyCode == KeyEvent.KEYCODE_BACK)&#123;</span><br><span class="line"></span><br><span class="line">                // handle back button</span><br><span class="line"></span><br><span class="line">                <span class="built_in">return</span> <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="built_in">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>因为在fragment中，getView方法可以获取到根view对象，然后将其设置为可以称为焦点的，然后再设置OnKeyListener即可。上面这种方法，应该说百分之90的情况下都是适用的，但是有一种情况，比如当前在顶层的view并不是在fragment的view树中的，而是后添加的一个view的时候，就行不通了，这个时候，我们可以想办法提前获取到要点击的view，然后通过参数将其传递进来，做同样的操作，类似下面的：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">private void <span class="built_in">set</span>OnKeyListener(View v) &#123;</span><br><span class="line">        getView();</span><br><span class="line">        v.setFocusableInTouchMode(<span class="literal">true</span>);</span><br><span class="line">        v.requestFocus();</span><br><span class="line">        v.setOnKeyListener(mOnKeyListener);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">    private View.OnKeyListener mOnKeyListener = new View.<span class="function"><span class="title">OnKeyListener</span></span>() &#123;</span><br><span class="line">        @Override</span><br><span class="line">        public boolean onKey(View v, int keyCode, KeyEvent event) &#123;</span><br><span class="line">            <span class="keyword">if</span> (event.getAction() == KeyEvent.ACTION_UP &amp;&amp; keyCode == KeyEvent.KEYCODE_BACK &amp;&amp; event.getRepeatCount() == 0) &#123;</span><br><span class="line">                // back 操作</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br></pre></td></tr></table></figure></p>
+<p>通过上面的操作，就可以完成在一个fragment中响应back按键的操作了。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+            <a href="/tags/fragment/" rel="tag">#fragment</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/31/Android注解式findViewByID以及注解的几种常见用法/" rel="next" title="Android注解式findViewByID以及注解的几种常见用法">
+                <i class="fa fa-chevron-left"></i> Android注解式findViewByID以及注解的几种常见用法
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/06/06/fragment获取back键的方法/"
+           data-title="Android中keyEvent的处理传递流程--fragment获取back键的方法" data-url="http:/imoblab.com/2016/06/06/fragment获取back键的方法/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://7xrywe.com1.z0.glb.clouddn.com/IMG_0942.JPG"
+               alt="苦咖啡" />
+          <p class="site-author-name" itemprop="name">苦咖啡</p>
+          <p class="site-description motion-element" itemprop="description">热爱摄影和旅行的咖啡君</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Android中的KeyEvent"><span class="nav-number">1.</span> <span class="nav-text">Android中的KeyEvent</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#DecorView的KeyEvent处理流程"><span class="nav-number">1.1.</span> <span class="nav-text">DecorView的KeyEvent处理流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Activity中的dispatchKeyEvent方法执行流程"><span class="nav-number">1.2.</span> <span class="nav-text">Activity中的dispatchKeyEvent方法执行流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PhoneWindow的superdispatchKeyEvent方法"><span class="nav-number">1.3.</span> <span class="nav-text">PhoneWindow的superdispatchKeyEvent方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#按键事件小结"><span class="nav-number">1.4.</span> <span class="nav-text">按键事件小结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#fragment中接收KeyEvent的方法"><span class="nav-number">2.</span> <span class="nav-text">fragment中接收KeyEvent的方法</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">苦咖啡</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"bottlechain"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js"></script>
+    
+  
+
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>
