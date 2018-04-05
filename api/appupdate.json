@@ -1,0 +1,13 @@
+﻿{
+    "error": false,
+    "results":
+        {
+            "app": "小爱天气",
+            "versionCode": 1,
+            "versionName": "1.0.0",
+	        "updateTime": "2018-03-08 17:00:00",
+            "information": "first\n",
+            "foreUpdate": false,
+            "url":"xxx.apk"
+        }
+}
